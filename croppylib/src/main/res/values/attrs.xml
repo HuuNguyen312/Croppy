@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="cropShape">
-        <enum name="rectangle" value="0"/>
-        <enum name="oval" value="1"/>
-    </attr>
+
 </resources>
