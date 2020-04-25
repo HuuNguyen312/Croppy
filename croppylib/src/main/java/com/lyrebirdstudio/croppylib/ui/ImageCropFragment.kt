@@ -9,6 +9,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.lyrebirdstudio.aspectratiorecyclerviewlib.aspectratio.model.AspectRatio
 import com.lyrebirdstudio.croppylib.R
 import com.lyrebirdstudio.croppylib.databinding.FragmentImageCropBinding
 import com.lyrebirdstudio.croppylib.main.CropRequest
@@ -70,7 +71,6 @@ class ImageCropFragment : Fragment() {
                 viewModel.updateCropSize(binding.cropView.getCropSizeOriginal())
             }
         }
-
         return binding.root
     }
 

@@ -2,30 +2,32 @@ package com.lyrebirdstudio.croppylib.cropview
 
 import android.content.Context
 import android.graphics.*
+import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.lyrebirdstudio.aspectratiorecyclerviewlib.aspectratio.model.AspectRatio
-import com.lyrebirdstudio.croppylib.cropview.AspectMode.*
+import com.lyrebirdstudio.aspectratiorecyclerviewlib.aspectratio.model.AspectRatio.ASPECT_FREE
+import com.lyrebirdstudio.croppylib.R
+import com.lyrebirdstudio.croppylib.cropview.AspectMode.ASPECT
+import com.lyrebirdstudio.croppylib.cropview.AspectMode.FREE
+import com.lyrebirdstudio.croppylib.main.CroppyTheme
+import com.lyrebirdstudio.croppylib.ui.CroppedBitmapData
+import com.lyrebirdstudio.croppylib.util.extensions.*
+import com.lyrebirdstudio.croppylib.util.model.AnimatableRectF
+import com.lyrebirdstudio.croppylib.util.model.Corner
 import com.lyrebirdstudio.croppylib.util.model.Corner.*
 import com.lyrebirdstudio.croppylib.util.model.Corner.NONE
+import com.lyrebirdstudio.croppylib.util.model.DraggingState
 import com.lyrebirdstudio.croppylib.util.model.DraggingState.DraggingCorner
 import com.lyrebirdstudio.croppylib.util.model.DraggingState.DraggingEdge
+import com.lyrebirdstudio.croppylib.util.model.Edge
 import com.lyrebirdstudio.croppylib.util.model.Edge.*
-import kotlin.math.max
-import android.graphics.Bitmap
-import androidx.core.content.ContextCompat
-import com.lyrebirdstudio.aspectratiorecyclerviewlib.aspectratio.model.AspectRatio.*
-import com.lyrebirdstudio.croppylib.ui.CroppedBitmapData
-import com.lyrebirdstudio.croppylib.R
-import com.lyrebirdstudio.croppylib.main.CroppyTheme
-import com.lyrebirdstudio.croppylib.util.extensions.*
-import com.lyrebirdstudio.croppylib.util.model.*
-import java.lang.IllegalStateException
 import kotlin.math.hypot
+import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class CropView @JvmOverloads constructor(
     context: Context,
@@ -33,6 +35,10 @@ class CropView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    var cropShape: CropShape = CropShape.RECTANGLE;
+
+    /** Used for oval crop window shape or non-straight rotation drawing.  */
+    private val mPath = Path()
     var onInitialized: (() -> Unit)? = null
 
     var observeCropRectOnOriginalBitmapChanged: ((RectF) -> Unit)? = null
@@ -357,6 +363,7 @@ class CropView @JvmOverloads constructor(
         return true
     }
 
+    var isCircle = true
     /**
      * Draw bitmap, cropRect, overlay
      */
@@ -368,12 +375,13 @@ class CropView @JvmOverloads constructor(
         }
 
         canvas?.save()
-        canvas?.clipRect(cropRect, Region.Op.DIFFERENCE)
+
+        drawCropAreaClip(canvas)
+
         canvas?.drawColor(maskBackgroundColor)
         canvas?.restore()
 
         drawGrid(canvas)
-
         drawCornerToggles(canvas)
     }
 
@@ -426,6 +434,10 @@ class CropView @JvmOverloads constructor(
             else -> ASPECT
         }
 
+        cropShape = when (aspectRatio) {
+            AspectRatio.ASPECT_INS_1_1 -> CropShape.OVAL
+            else -> CropShape.RECTANGLE
+        }
         aspectRatioChanged()
         invalidate()
     }
@@ -461,6 +473,20 @@ class CropView @JvmOverloads constructor(
         onInitialized?.invoke()
 
         invalidate()
+    }
+
+    private fun drawCropAreaClip(canvas: Canvas?) {
+        if (cropShape === CropShape.OVAL) {
+            mPath.reset()
+            mPath.addOval(cropRect, Path.Direction.CW)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas?.clipOutPath(mPath)
+            } else {
+                canvas?.clipPath(mPath, Region.Op.XOR)
+            }
+        } else {
+            canvas?.clipRect(cropRect, Region.Op.DIFFERENCE)
+        }
     }
 
     /**

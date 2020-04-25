@@ -21,7 +21,7 @@
     <!-- Crop overlay view-->
     <dimen name="margin_max_crop_rect">24dp</dimen>
 
-    <dimen name="corner_toggle_width">6dp</dimen>
+    <dimen name="corner_toggle_width">4dp</dimen>
 
     <dimen name="corner_toggle_length">32dp</dimen>
 
