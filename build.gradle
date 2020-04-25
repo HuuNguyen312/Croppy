@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.3.61'
     repositories {
         google()
         jcenter()
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -19,27 +19,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        // HuhuSDK declaration
-        maven {
-            authentication {
-                basic(BasicAuthentication)
-            }
-            url "https://api.bitbucket.org/2.0/repositories/hungpham2910/huhusdk-maven/src/snapshots"
-            credentials {
-                username REPOSITORY_USERNAME
-                password REPOSITORY_PASSWORD
-            }
-        }
-        maven {
-            authentication {
-                basic(BasicAuthentication)
-            }
-            url "https://api.bitbucket.org/2.0/repositories/hungpham2910/huhusdk-maven/src/releases"
-            credentials {
-                username REPOSITORY_USERNAME
-                password REPOSITORY_PASSWORD
-            }
-        }
     }
 }
 
