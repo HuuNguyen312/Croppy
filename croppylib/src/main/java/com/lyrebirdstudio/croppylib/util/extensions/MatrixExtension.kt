@@ -9,6 +9,7 @@ private val values = FloatArray(9)
 
 fun Matrix.animateScaleToPoint(
     scaleFactor: Float,
+    isFirst: Boolean,
     dx: Float,
     dy: Float,
     onUpdate: () -> Unit = {}
@@ -21,11 +22,12 @@ fun Matrix.animateScaleToPoint(
             })
         }
 
-    animateToMatrix(targetMatrix, onUpdate)
+    animateToMatrix(targetMatrix, isFirst, onUpdate)
 }
 
 fun Matrix.animateToMatrix(
     targetMatrix: Matrix,
+    isFirst: Boolean,
     onUpdate: () -> Unit = {}
 ) {
 
@@ -57,7 +59,7 @@ fun Matrix.animateToMatrix(
             )
         }
         .apply { interpolator = AccelerateDecelerateInterpolator() }
-        .apply { duration = 300 }
+        .apply { duration = if(isFirst) 0 else 300 }
         .start()
 
 

@@ -91,6 +91,7 @@ class ImageCropFragment : Fragment() {
 
                 if (ViewCompat.isLaidOut(binding.cropView)) {
                     binding.cropView.setBitmap(resizedBitmap.bitmap)
+                    binding.cropView.setAspectRatio(AspectRatio.ASPECT_INS_1_1)
                 } else {
                     binding.cropView.doOnPreDraw { binding.cropView.setBitmap(resizedBitmap.bitmap) }
                 }

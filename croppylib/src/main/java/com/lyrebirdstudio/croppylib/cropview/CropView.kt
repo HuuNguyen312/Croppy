@@ -35,6 +35,7 @@ class CropView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    var isFirstSet = true;
     var cropShape: CropShape = CropShape.RECTANGLE;
 
     /** Used for oval crop window shape or non-straight rotation drawing.  */
@@ -220,7 +221,7 @@ class CropView @JvmOverloads constructor(
                 val translateY = (viewHeight - bitmapRect.height() * scale) / 2f + marginInPixelSize
                 resetMatrix.postTranslate(translateX, translateY)
 
-                bitmapMatrix.animateToMatrix(resetMatrix) {
+                bitmapMatrix.animateToMatrix(resetMatrix, isFirstSet) {
                     notifyCropRectChanged()
                     invalidate()
                 }
@@ -235,6 +236,7 @@ class CropView @JvmOverloads constructor(
 
             bitmapMatrix.animateScaleToPoint(
                 DOUBLE_TAP_SCALE_FACTOR,
+                isFirstSet,
                 motionEvent.x.coerceIn(translateX, translateX + bitmapRect.width() * scaleX),
                 motionEvent.y.coerceIn(translateY, translateY + bitmapRect.height() * scaleY)
             ) {
@@ -439,6 +441,7 @@ class CropView @JvmOverloads constructor(
             else -> CropShape.RECTANGLE
         }
         aspectRatioChanged()
+        isFirstSet = false;
         invalidate()
     }
 
@@ -669,11 +672,11 @@ class CropView @JvmOverloads constructor(
         val translateY = (viewHeight - bitmapRect.height() * scale) / 2f + marginInPixelSize
         resetMatrix.postTranslate(translateX, translateY)
 
-        bitmapMatrix.animateToMatrix(resetMatrix) {
+        bitmapMatrix.animateToMatrix(resetMatrix, isFirstSet) {
             invalidate()
         }
 
-        cropRect.animateTo(targetRect) {
+        cropRect.animateTo(targetRect, isFirstSet) {
             invalidate()
             notifyCropRectChanged()
         }
@@ -1294,7 +1297,7 @@ class CropView @JvmOverloads constructor(
         matrix.postTranslate(translateX, translateY)
         newBitmapMatrix.postConcat(matrix)
 
-        bitmapMatrix.animateToMatrix(newBitmapMatrix) {
+        bitmapMatrix.animateToMatrix(newBitmapMatrix, isFirstSet) {
             invalidate()
         }
     }
@@ -1303,7 +1306,7 @@ class CropView @JvmOverloads constructor(
      * Animates current croprect to the center position
      */
     private fun animateCropRectToCenterTarget() {
-        cropRect.animateTo(targetRect) {
+        cropRect.animateTo(targetRect, isFirstSet) {
             invalidate()
             notifyCropRectChanged()
         }
@@ -1371,7 +1374,7 @@ class CropView @JvmOverloads constructor(
         matrix.postTranslate(translateX, translateY)
         newBitmapMatrix.postConcat(matrix)
 
-        bitmapMatrix.animateToMatrix(newBitmapMatrix) {
+        bitmapMatrix.animateToMatrix(newBitmapMatrix, isFirstSet) {
             invalidate()
             notifyCropRectChanged()
         }

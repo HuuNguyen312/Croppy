@@ -10,7 +10,7 @@ import com.lyrebirdstudio.croppylib.util.model.Corner
 import com.lyrebirdstudio.croppylib.util.model.Edge
 import kotlin.math.hypot
 
-fun AnimatableRectF.animateTo(target: AnimatableRectF, onUpdate: (RectF) -> Unit = {}) {
+fun AnimatableRectF.animateTo(target: AnimatableRectF, isFirst: Boolean, onUpdate: (RectF) -> Unit = {}) {
 
     val animateLeft = ObjectAnimator.ofFloat(this, "left", left, target.left)
     val animateRight = ObjectAnimator.ofFloat(this, "right", right, target.right)
@@ -23,7 +23,7 @@ fun AnimatableRectF.animateTo(target: AnimatableRectF, onUpdate: (RectF) -> Unit
     AnimatorSet()
         .apply { playTogether(animateLeft, animateRight, animateTop, animateBottom) }
         .apply { interpolator = AccelerateDecelerateInterpolator() }
-        .apply { duration = 300 }
+        .apply { duration = if (isFirst) 0 else 300 }
         .start()
 }
 
